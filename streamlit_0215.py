@@ -354,18 +354,30 @@ def render_dashboard():
                                 )
 
                                 # MACD 히스토그램 (왼쪽 y축)
-                                colors = ['red' if val < 0 else 'green' 
-                                        for val in df_prices['MACD_Hist']]
+                                colors = ['red' if val < 0 else 'green' for val in df_prices['MACD_Hist']]
                                 fig.add_trace(
                                     go.Bar(
                                         x=df_prices['timestamp'],
                                         y=df_prices['MACD_Hist'],
                                         name='MACD Hist',
-                                        marker_color=colors,
-                                        opacity=0.5
+                                        marker=dict(
+                                            color=colors,
+                                            opacity=0.3  # 투명도 증가 (더 연하게)
+                                        ),
+                                        width=60000,  # 막대 너비 1분으로 설정 (60000 밀리초 = 1분)
                                     ),
                                     row=1, col=1,
                                     secondary_y=False
+                                )
+
+                                # y축 범위 조정 (MACD와 Histogram을 위한 왼쪽 y축)
+                                fig.update_yaxes(
+                                    title_text="MACD",
+                                    row=1,
+                                    col=1,
+                                    secondary_y=False,
+                                    range=[min(df_prices['MACD_Hist'].min(), df_prices['MACD'].min()) * 1.2,  # 20% 여유 공간
+                                        max(df_prices['MACD_Hist'].max(), df_prices['MACD'].max()) * 1.2]
                                 )
 
                                 # MACD 라인 (왼쪽 y축)
